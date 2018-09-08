@@ -1,0 +1,15 @@
+<h1>Product</h1>
+
+<p>
+  <span>Name:&nbsp;</span>{{products.name}}<br>
+  <span>Price:&nbsp;</span>{{products.price}}<br>
+  <span>Inventory:&nbsp;</span>{{products.inventory}}
+</p>
+
+{{#if products.needToEdit}}
+
+<form action="/products/{{products.id}}/editDelete" method="get">
+  <input class="h2link" type="submit" value="EDIT" required>
+</form>
+
+{{/if}}

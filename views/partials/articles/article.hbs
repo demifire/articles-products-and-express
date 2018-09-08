@@ -1,0 +1,15 @@
+<h1>Article</h1>
+
+<p>
+  <span>Title:&nbsp;</span>{{articles.title}}<br> 
+  <span>Body:&nbsp;</span>{{articles.body}}<br>
+  <span>Author:&nbsp;</span>{{articles.author}}<br>
+</p>
+
+{{#if articles.needToEdit}}
+
+<form action="/articles/{{articles.title}}/editDelete" method="get">
+  <input class="h2link" type="submit" value="EDIT">
+</form>
+
+{{/if}}

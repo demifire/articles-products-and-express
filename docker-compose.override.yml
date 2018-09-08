@@ -1,0 +1,18 @@
+version: '3'
+services:
+  my-app:
+    image: demifire/articles-assignment:${IMAGE_VERSION}-local
+    command: ["./node_modules/.bin/nodemon", "app.js"]
+    container_name: my-app2
+    volumes:
+      - ".:/app/:rw"
+    env_file: .env
+    environment:
+      NODE_ENV: development
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - my-app-network
+
+networks:
+  my-app-network:

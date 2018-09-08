@@ -1,0 +1,43 @@
+{{#if products}}
+  
+  {{#if products.list}}
+
+    {{> products/listProducts}}
+
+  {{else if products.new}}
+
+    {{> products/new}}
+
+  {{else if products.product}}
+
+    {{> products/product}}
+
+    {{#if products.edit}}
+      {{> products/editDelete}}
+    {{/if}}
+
+  {{/if}}
+
+{{else if articles}}
+  
+    {{#if articles.showArticles}}
+
+      {{> articles/showArticles}}
+
+    {{else if articles.new}}
+
+      {{> articles/new}}
+
+    {{else if articles.article}}
+
+      {{> articles/article}}
+
+      {{#if articles.edit}}
+      {{> articles/editDelete}}
+      {{/if}}
+
+    {{/if}}
+
+{{/if}}
+
+{{> footer}}

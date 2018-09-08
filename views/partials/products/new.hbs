@@ -1,0 +1,11 @@
+<h2>Add Product</h2>
+
+<form action="/products/new" method="POST">
+  <p><span>Name:&nbsp;</span><input type="text" name="name" value="" required></p>
+  <p><span>Price:&nbsp;</span><input type="number" min=".01" step=".01" name="price" placeholder="Min: 0.01" value="" required></p>
+  <p><span>Inventory:&nbsp;</span><input type="number" min="1" step="1" name="inventory" placeholder="Min: 1" value="" required></p>
+
+  <br>
+
+  <input class="h2link" type="submit" value="SUBMIT">
+</form> 
