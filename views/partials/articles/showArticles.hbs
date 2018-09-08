@@ -1,0 +1,41 @@
+<h2>Add New Article</h2>
+
+  <form action="/articles/new" method="get">
+    <input class="h2link" type="submit" value="ADD">
+  </form>
+  
+  <br>
+
+{{#if articles.showFunction}}
+
+<h2>List of Articles</h2>
+
+{{/if}}
+
+<ul>
+
+  {{#each articles.showFunction}}
+
+    <li>
+      <p><span>Title:&nbsp;</span>{{title}}, 
+      <br><span>Body:&nbsp;</span>{{body}}, 
+      <br><span>Author:&nbsp;</span>{{author}}</p>
+      <p><form action="" method="get">
+        <input class="h2link" type="submit" formaction="/articles/{{title}}" value="VIEW">
+      </form>
+    </li>
+
+    <br>
+
+  {{/each}}    
+
+</ul>
+
+{{#if articles.itemDeleted}}
+
+<div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  Error: Article doesn't exist!
+</div>
+
+{{/if}}

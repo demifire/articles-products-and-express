@@ -1,0 +1,21 @@
+<br>
+
+<h2>Edit Product</h2>
+
+<form action="/products/{{products.id}}?_method=put" method="post">
+  <p><span>Name:&nbsp;</span><input type="text" name="name" value="{{products.name}}" required></p>
+  <p><span>Price:&nbsp;</span><input type="number" min=".01" step=".01" name="price" placeholder="Min: 0.01" value="{{products.price}}" required></p>
+  <p><span>Inventory:&nbsp;</span><input type="number" min="1" step="1" name="inventory" placeholder="Min: 1" value="{{products.inventory}}" required></p>
+  <input class="h2link" type="submit" value="SUBMIT">
+</form> 
+
+<br>
+
+<h2>Delete Product</h2>
+<form action="/products/{{products.id}}?_method=delete" method="post">
+   <p><span>ID:&nbsp;</span><input type="text" name="name" value="{{products.id}}" disabled></p>
+  <input class="h2link" type="submit" value="DELETE">
+</form>
+
+
+

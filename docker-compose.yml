@@ -1,0 +1,5 @@
+version: '3'
+services:
+  my-app:
+    build: .
+    image: demifire/articles-assignment:local

@@ -1,0 +1,38 @@
+<h2>Add New Product</h2>
+
+  <form action="/products/new" method="get">
+    <input class="h2link" type="submit" value="ADD">
+  </form>
+
+<br>
+
+{{#if products.showFunction}}
+
+<h2>List of Products</h2>
+
+{{/if}}
+
+<ul>
+  {{#each products.showFunction}}
+    <li>
+      <p><span>Name:&nbsp;</span>{{name}},</p> 
+      <p><span>Price:&nbsp;</span>${{price}},</p> 
+      <p><span>Inventory:&nbsp;</span>{{inventory}}</p>
+      <form action="" method="get">
+        <input class="h2link" type="submit" formaction="/products/{{id}}" value="VIEW" required>
+      </form>
+
+      <br>
+
+    </li>
+  {{/each}}
+</ul>
+
+{{#if products.itemDeleted}}
+
+<div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  Error: Product doesn't exist!
+</div>
+
+{{/if}}

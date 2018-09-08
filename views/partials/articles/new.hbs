@@ -1,0 +1,24 @@
+<h2>Add Article</h2>
+
+<form action="/articles/new" method="post">
+
+  <p><span>Title:&nbsp;</span><input type="text" name="title" value="" required></p>
+  <p><span>Body:&nbsp;</span><input type="text" name="body" value="" required></p>
+  <p><span>Author:&nbsp;</span><input type="text" name="author" value="" required></p>
+
+  <br>
+
+  <input class="h2link" type="submit" value="SUBMIT">
+
+</form> 
+
+<br>
+
+{{#if articles.nameExists}}
+
+<div id="element1" class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  Error: Article title already exists!
+</div>
+
+{{/if}}

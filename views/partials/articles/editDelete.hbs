@@ -1,0 +1,30 @@
+<br>
+
+<h2>Edit Article</h2>
+
+<form action="/articles/{{articles.title}}?_method=put" method="post">
+  <p><span>Title:&nbsp;</span><input type="text" name="title" value="{{articles.title}}" required></p>
+  <p><span>Body:&nbsp;</span><input type="text" name="body" value="{{articles.body}}" required></p>
+  <p><span>Author:&nbsp;</span><input type="text" name="author" value="{{articles.author}}" required></p>
+  <input class="h2link" type="submit" value="SUBMIT">
+</form> 
+
+<br>
+
+{{#if articles.cannotAlter}}
+
+<div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  Error: Cannot alter title. <br><br> Click 'add' on articles list <br> to create a new title.
+</div>
+
+<br>
+
+{{/if}}
+
+<h2>Delete Article</h2>
+
+<form action="/articles/{{articles.title}}?_method=delete" method="post">
+  <p><span>Title:&nbsp;</span><input type="text" name="name" value="{{articles.title}}" disabled></p>
+  <input class="h2link" type="submit" value="DELETE">
+</form>
