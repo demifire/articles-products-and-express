@@ -1,5 +1,6 @@
 class Products {
   constructor() {
+    this.knex = require('../knex/knex.js')
     // Creates the Products array
     this._productList = [
       {
@@ -22,8 +23,7 @@ class Products {
 
   // Lists all objects in the array
   showAll () {
-    // console.log(this._productList);
-    return this._productList;
+    return this.knex.raw('SELECT * FROM items')
   }
 
   // First checks if the product already exists, and if it does, it does not create
