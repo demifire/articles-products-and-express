@@ -1,5 +1,8 @@
 // Update with your config settings.
-console.log('process.env', process.env)
+
+// console.log('process.env', process.env)
+// This console log helps with port mapping and seeing what's reading from your env
+
 require('dotenv').config({path: './.env'})
 // Gives knex migrations which is outside of the docker daemon access to our .env file
 module.exports = {

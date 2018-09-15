@@ -1,3 +1,5 @@
+
+
 class Articles {
   constructor() {
     // Creates the Article array

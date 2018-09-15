@@ -1,18 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const knex = require('../knex/knex.js')
 
 const Products = require('../db/products');
 const products = new Products();
 
 router.route('/')
-  .get((req, res) => {
-    res.render('index', { 
-      products : {
-        list : true,
-        showFunction : products.showAll()
-      } 
-    });
-  });
+knex.raw('SELECT * FROM items')
+.then( results => {
+  console.log('YOOOOOOOOOOOOOOO')
+  const items = results.rows
+  res.render('home2', { items })
+  console.log('results', results)
+})
+.catch( err => {
+  console.log('error', err)
+});
 
 router.route('/new')
   .get((req, res) => {
