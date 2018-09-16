@@ -6,15 +6,20 @@ const Products = require('../db/products');
 const products = new Products();
 
 router.route('/')
-knex.raw('SELECT * FROM items')
-.then( results => {
-  console.log('YOOOOOOOOOOOOOOO')
-  const items = results.rows
-  res.render('home2', { items })
-  console.log('results', results)
+.get((req, res) => {
+  products.showAll()
+  .then( results => {
+    const productData = results.rows
+    res.render('index', { 
+      products : {
+        list : true,
+        showFunction : productData
+    } 
+  })
 })
-.catch( err => {
-  console.log('error', err)
+  .catch( err => {
+    console.log('error', err)
+  });
 });
 
 router.route('/new')
