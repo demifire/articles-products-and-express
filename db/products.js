@@ -1,7 +1,12 @@
 class Products {
   constructor() {
-    this.knex = require('../knex/knex.js')
+    this.knex = require('../knex/knex.js');
+    this._productNumber = 3;
   }
+
+loadDatabase() {
+  return this.knex.raw('SELECT * FROM items');
+}
 
 // Refreshes all objects in the database items array
 showAll () {
@@ -13,6 +18,7 @@ showAll () {
   .catch( err => {
     console.log('error', err)
   });
+
   return this._productList;
 }
 
@@ -37,21 +43,21 @@ createProduct(data) {
 
 // Checks if the element exists in the array
 checkIfProductExists(id) {
-  return this._productList.some(element => {
+  return this.showAll().some(element => {
     return element.id === Number(id);
   })
 }
 
 // Finds index of the element
 findTheIndex(id) {
-  return this._productList.findIndex((element, index) => {
+  return this.showAll().findIndex((element, index) => {
     return element.id === Number(id);
   })
 }
 
 // Returns the value of the first element in the array that matches the title
 getProduct(id) {
-  return this._productList.find(element => {
+  return this.showAll().find(element => {
     return element.id === Number(id);
   })
 }
@@ -76,8 +82,32 @@ editProduct(id, data) {
 removeProduct(id) {
   if (this.checkIfProductExists(id)) {
     let index = this.findTheIndex(id);
+    
+    this.knex.raw('DELETE FROM items WHERE id = ' + id)
+      .then( spliceCache => {
+        this._productList.splice(index, 1);
+        this.knex.raw('ALTER SEQUENCE items_id_seq RESTART WITH 1;')
+        .then( reIndexSQL => {
+          this.knex.raw("UPDATE items SET id=nextval('items_id_seq');")
+            .then( finishFunction => {
+              this._productNumber--;
+              return finishFunction;
+            })
+            .catch( err => {
+              console.log(err)
+            })
+            return reIndexSQL;
+        })
+        .catch( err => {
+          console.log(err)
+        })
+        return spliceCache
+      })
+      .catch( err => {
+        console.log(err)
+      })
+      return true;
 
-    return this._productList.splice(index, 1);
   } else {
     return false;
   }

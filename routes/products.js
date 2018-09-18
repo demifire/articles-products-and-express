@@ -6,12 +6,19 @@ const products = new Products();
 
 router.route('/')
   .get((req, res) => {
-    res.render('index', { 
-      products : {
-        list : true,
-        showFunction : products.showAll()
-      } 
-    });
+    products.loadDatabase()
+      .then( loadingCompleted => {
+        res.render('index', { 
+          products : {
+            list : true,
+            showFunction : products._productList
+          } 
+        });
+        return loadingCompleted;
+      })
+      .catch ( err => {
+        console.log(err);
+      })
   });
 
 router.route('/new')
@@ -30,11 +37,8 @@ router.route('/new')
 
 router.route('/:id')
   .get((req, res) => {
-    console.log('this is the req', req)
     let id = req.params.id;
-    console.log(id);
     if (products.checkIfProductExists(id)) { 
-      console.log('here');
       let data = products.getProduct(id);
 
       return res.render('index', {
@@ -80,13 +84,11 @@ router.route('/:id')
 
 router.route('/:id/editDelete')
   .get((req, res) => {
-    console.log('This is the param', req.params)
     let id = req.params.id;
     let targetItem = products.checkIfProductExists(id);
 
     if (targetItem) { 
       let data = products.getProduct(id);
-      console.log('Product Data', data);
 
       return res.render('index', {
         products : {
