@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const knex = require('../knex/knex.js')
+// const knex = require('../knex/knex.js')
 
 const Products = require('../db/products');
 const products = new Products();
 
 router.route('/')
 .get((req, res) => {
-  products.showAll()
+  products.loadDatabase()
   .then( results => {
-    const productData = results.rows
+    const productData = results.rows;
     res.render('index', { 
       products : {
         list : true,
@@ -38,27 +38,46 @@ router.route('/new')
 
 router.route('/:id')
   .get((req, res) => {
-    console.log('this is the req', req)
-    let id = req.params.id;
-    console.log(id);
-    if (products.checkIfProductExists(id)) { 
-      console.log('here');
-      let data = products.getProduct(id);
+    products.loadDatabase()
+    .then( results => {
+      const id = req.params.id;
+        const productData = results.rows[(id-1)];
+          res.render('index', { 
+            products : {
+              product : true,
+              needToEdit : true,
+              id : productData.id,
+              name : productData.name,
+              price : productData.price,
+              inventory : productData.inventory
+            } 
+          }) 
+    .catch( err => {
+      console.log('error', err)
+    });
+    
+    // console.log('this is the req', req)
+    // let id = req.params.id;
+    // console.log(id);
+    // if (products.checkIfProductExists(id)) { 
+    //   console.log('here');
+    //   let data = products.getProduct(id);
 
-      return res.render('index', {
-        products : {
-          product : true,
-          needToEdit : true,
-          id : data.id,
-          name : data.name,
-          price : data.price,
-          inventory : data.inventory
-        }
-      })
-    } else {
-      return res.redirect(`/products`);
-    }
-  })
+    //   return res.render('index', {
+    //     products : {
+    //       product : true,
+    //       needToEdit : true,
+    //       id : data.id,
+    //       name : data.name,
+    //       price : data.price,
+    //       inventory : data.inventory
+    //     }
+    //   })
+    // } else {
+    //   return res.redirect(`/products`);
+    // }
+})
+})
 
   .put((req, res) => {
     let id = req.params.id;

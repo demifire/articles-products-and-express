@@ -2,27 +2,11 @@ class Products {
   constructor() {
     this.knex = require('../knex/knex.js')
     // Creates the Products array
-    this._productList = [
-      {
-        'id' : 1,
-        'name' : 'Cat',
-        'price' : 1,
-        'inventory' : 2
-      },
-
-      {
-        'id' : 2,
-        'name' : 'Dog',
-        'price' : 4,
-        'inventory' : 5
-      }
-    ];
-
-    this._productNumber = 2;
+    this._productList = this.loadDatabase();
   }
 
-  // Lists all objects in the array
-  showAll () {
+  // Loads database, and then loads content using promises and athenables
+  loadDatabase () {
     return this.knex.raw('SELECT * FROM items')
   }
 
