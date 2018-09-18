@@ -47,16 +47,23 @@ createProduct(data) {
     // };
 
     // this._productList.push(productInfo);
-    this.showAll();
     return true;
   }
 }
 
 // Checks if the element exists in the array
 checkIfProductExists(id) {
-  return this._productList.some(element => {
-    return element.id === Number(id);
-  })
+  if (this._productList === undefined) {
+    return false
+  } else {
+    return this._productList.some(element => {
+      if (element.id === Number(id)) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+  }
 }
 
 // Finds index of the element
@@ -105,7 +112,6 @@ removeProduct(id) {
       })
       this.showAll();
       return true;
-
   } else {
     return false;
   }

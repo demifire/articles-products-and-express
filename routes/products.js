@@ -10,7 +10,7 @@ router.route('/')
     return res.render('index', { 
       products : {
         list : true,
-        showFunction : products.showList()
+        showFunction : products.showAll()
       } 
     });
   });
