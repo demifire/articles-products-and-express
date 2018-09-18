@@ -18,7 +18,11 @@ showAll () {
   .catch( err => {
     console.log('error', err)
   });
+  return this._productList;
+}
 
+// Just returns the product list
+showList () {
   return this._productList;
 }
 
@@ -28,36 +32,43 @@ createProduct(data) {
     return false;
   } else {
     this._productNumber += 1;
+    this.knex.raw('INSERT INTO items (id, name, price, inventory) VALUES (' + this._productNumber + ',' + "'" + data.name + "'" + ',' + Number(data.price) + ',' + Number(data.inventory) + ')')
+      .then( productAdded => {
+        return productAdded
+      })
+      .catch( err => {
+        console.log(err);
+      })
+    // let productInfo = {
+    //   id : this._productNumber,
+    //   name : data.name,
+    //   price : Number(data.price),
+    //   inventory : Number(data.inventory)
+    // };
 
-    let productInfo = {
-      id : this._productNumber,
-      name : data.name,
-      price : Number(data.price),
-      inventory : Number(data.inventory)
-    };
-
-    this._productList.push(productInfo);
+    // this._productList.push(productInfo);
+    this.showAll();
     return true;
   }
 }
 
 // Checks if the element exists in the array
 checkIfProductExists(id) {
-  return this.showAll().some(element => {
+  return this._productList.some(element => {
     return element.id === Number(id);
   })
 }
 
 // Finds index of the element
 findTheIndex(id) {
-  return this.showAll().findIndex((element, index) => {
+  return this._productList.findIndex((element, index) => {
     return element.id === Number(id);
   })
 }
 
 // Returns the value of the first element in the array that matches the title
 getProduct(id) {
-  return this.showAll().find(element => {
+  return this._productList.find(element => {
     return element.id === Number(id);
   })
 }
@@ -78,34 +89,21 @@ editProduct(id, data) {
   }
 }
 
-// Splices the index out of the array
+// Splices the index out of the array and reindexes products
 removeProduct(id) {
   if (this.checkIfProductExists(id)) {
     let index = this.findTheIndex(id);
     
-    this.knex.raw('DELETE FROM items WHERE id = ' + id)
-      .then( spliceCache => {
+    this.knex.raw('DELETE FROM items WHERE id = ' + id + ';' + 'ALTER SEQUENCE items_id_seq RESTART WITH 1;' + "UPDATE items SET id=nextval('items_id_seq');")
+      .then( removed => {
         this._productList.splice(index, 1);
-        this.knex.raw('ALTER SEQUENCE items_id_seq RESTART WITH 1;')
-        .then( reIndexSQL => {
-          this.knex.raw("UPDATE items SET id=nextval('items_id_seq');")
-            .then( finishFunction => {
-              this._productNumber--;
-              return finishFunction;
-            })
-            .catch( err => {
-              console.log(err)
-            })
-            return reIndexSQL;
-        })
-        .catch( err => {
-          console.log(err)
-        })
-        return spliceCache
+        this._productNumber--;
+        return removed;
       })
       .catch( err => {
         console.log(err)
       })
+      this.showAll();
       return true;
 
   } else {

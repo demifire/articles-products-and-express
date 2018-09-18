@@ -6,19 +6,13 @@ const products = new Products();
 
 router.route('/')
   .get((req, res) => {
-    products.loadDatabase()
-      .then( loadingCompleted => {
-        res.render('index', { 
-          products : {
-            list : true,
-            showFunction : products._productList
-          } 
-        });
-        return loadingCompleted;
-      })
-      .catch ( err => {
-        console.log(err);
-      })
+    products.showAll();
+    return res.render('index', { 
+      products : {
+        list : true,
+        showFunction : products.showList()
+      } 
+    });
   });
 
 router.route('/new')
@@ -31,8 +25,11 @@ router.route('/new')
   })
 
   .post((req, res) => {
-    if (products.createProduct(req.body)) return res.redirect('/products');
-    else return res.redirect('/articles/new');
+    if (products.createProduct(req.body)) {
+      return res.redirect('/products');
+    } else {
+      return res.redirect('/articles/new');
+    }
   });
 
 router.route('/:id')
