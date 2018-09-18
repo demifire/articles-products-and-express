@@ -32,6 +32,7 @@ createProduct(data) {
     return false;
   } else {
     this._productNumber += 1;
+    console.log(this._productNumber, 'product number bitch')
     this.knex.raw('INSERT INTO items (id, name, price, inventory) VALUES (' + this._productNumber + ',' + "'" + data.name + "'" + ',' + Number(data.price) + ',' + Number(data.inventory) + ')')
       .then( productAdded => {
         return productAdded
@@ -105,6 +106,7 @@ removeProduct(id) {
       .then( removed => {
         this._productList.splice(index, 1);
         this._productNumber--;
+        console.log(this._productNumber, 'NEW product number BITCH');
         return removed;
       })
       .catch( err => {

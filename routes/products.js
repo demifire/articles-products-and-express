@@ -6,13 +6,21 @@ const products = new Products();
 
 router.route('/')
   .get((req, res) => {
-    products.showAll();
-    return res.render('index', { 
-      products : {
-        list : true,
-        showFunction : products.showAll()
-      } 
-    });
+    // Inserted an athenable here to make sure that data from db loads first
+    console.log(products.showAll(), 'this should be updated bitch');
+    products.loadDatabase()
+      .then( loadingCompleted => {
+        res.render('index', { 
+          products : {
+            list : true,
+            showFunction : products.showAll()
+          } 
+        });
+        return loadingCompleted;
+      })
+      .catch( err => {
+        console.log(err);
+      })
   });
 
 router.route('/new')
