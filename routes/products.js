@@ -7,7 +7,6 @@ const products = new Products();
 router.route('/')
   .get((req, res) => {
     // Inserted an athenable here to make sure that data from db loads first
-    console.log(products.showAll(), 'this should be updated bitch');
     products.loadDatabase()
       .then( loadingCompleted => {
         res.render('index', { 
@@ -47,10 +46,8 @@ router.route('/:id')
     let id = req.params.id;
     products.refreshID(id)
       .then( loadingCompleted => {
-        console.log(loadingCompleted, "---loading completed 323424----");
         if (products.checkIfProductExists(id)) {
           let data = loadingCompleted.rows[0];
-          console.log(data, 'sup');
     
           res.render('index', {
             products : {
@@ -102,7 +99,13 @@ router.route('/:id')
     if (products.removeProduct(id)) {
     return res.redirect('/products');
     }
-    else return res.redirect(`/products/${id}`);
+    else return res.render('index', { 
+      products : {
+          list : true,
+          showFunction : products.showAll(),
+          itemDeleted : true
+      }
+    })
   });
 
 router.route('/:id/editDelete')

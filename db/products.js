@@ -1,6 +1,8 @@
 class Products {
   constructor() {
     this.knex = require('../knex/knex.js');
+    this._itemsCreated = 3;
+    this._itemDeletedArr = [];
   }
 
 loadDatabase() {
@@ -36,8 +38,8 @@ createProduct(data) {
     return false;
   } else {
     this._productNumber += 1;
-    console.log(this._productNumber, 'product number bitch')
-    this.knex.raw('INSERT INTO items (id, name, price, inventory) VALUES (' + this._productNumber + ',' + "'" + data.name + "'" + ',' + Number(data.price) + ',' + Number(data.inventory) + ')')
+    this._itemsCreated += 1;
+    this.knex.raw('INSERT INTO items (id, creationid, name, price, inventory) VALUES (' + this._productNumber + ',' + this._itemsCreated + ',' + "'" + data.name + "'" + ',' + Number(data.price) + ',' + Number(data.inventory) + ')')
       .then( productAdded => {
         return productAdded
       })
@@ -82,6 +84,12 @@ getProduct(id) {
 editProduct(id, data) {
   if (this.checkIfProductExists(id)) {
     let index = this.findTheIndex(id);
+    if (this._itemDeletedArr.includes(this._productList[index].creationid)) {
+      console.log(this._productList[index].creationid, 'creation id!');
+      console.log(this._itemDeletedArr);
+      return false
+    } else { 
+    let index = this.findTheIndex(id);
     let targetItem = this._productList[index];
     if (data.name) {
       if (data.name) targetItem.name = data.name;
@@ -93,10 +101,31 @@ editProduct(id, data) {
           console.log(err);
         })
     }
+    if (data.price) {
+      if (data.price) targetItem.price = data.price;
+      this.knex.raw(`UPDATE items SET price = '${data.price}' WHERE id = ${id};`)
+        .then( EditCompleted => {
+          return EditCompleted;
+        })
+        .catch( err => {
+          console.log(err);
+        })
+    }
+    if (data.inventory) {
+      if (data.inventory) targetItem.inventory = data.inventory;
+      this.knex.raw(`UPDATE items SET inventory = '${data.inventory}' WHERE id = ${id};`)
+        .then( EditCompleted => {
+          return EditCompleted;
+        })
+        .catch( err => {
+          console.log(err);
+        })
+    }
     // if (data.price) targetItem.price = data.price;
     // if (data.inventory) targetItem.inventory = data.inventory;
     
     return true;
+   }
   } else {
     return false;
   }
@@ -106,12 +135,16 @@ editProduct(id, data) {
 removeProduct(id) {
   if (this.checkIfProductExists(id)) {
     let index = this.findTheIndex(id);
+    if (this._itemDeletedArr.includes(this._productList[index].creationid)) {
+      return false
+    } else { 
+    this._itemDeletedArr.push(parseInt(this._productList[index].creationid));
+    console.log(this._itemDeletedArr, "ITEM WAS DELETED");
     
     this.knex.raw('DELETE FROM items WHERE id = ' + id + ';' + 'ALTER SEQUENCE items_id_seq RESTART WITH 1;' + "UPDATE items SET id=nextval('items_id_seq');")
       .then( removed => {
         this._productList.splice(index, 1);
         this._productNumber--;
-        console.log(this._productNumber, 'NEW product number BITCH');
         return removed;
       })
       .catch( err => {
@@ -119,9 +152,11 @@ removeProduct(id) {
       })
       this.showAll();
       return true;
+    }
   } else {
     return false;
   }
+
 }
 
 } 
