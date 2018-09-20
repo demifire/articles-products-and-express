@@ -1,7 +1,6 @@
 class Products {
   constructor() {
     this.knex = require('../knex/knex.js');
-    this._productNumber = 3;
   }
 
 loadDatabase() {
@@ -13,6 +12,7 @@ showAll () {
   this.knex.raw('SELECT * FROM items')
   .then( results => {
     this._productList = results.rows;
+    this._productNumber = this._productList.length;
     return results;
   })
   .catch( err => {
@@ -21,9 +21,13 @@ showAll () {
   return this._productList;
 }
 
+refreshID (id) {
+  return this.knex.raw(`SELECT * FROM items WHERE id = ${id}`)
+}
+
 // Just returns the product list
 showList () {
-  return this._productList;
+  return this._productList
 }
 
 // First checks if the product already exists, and if it does, it does not create
@@ -40,24 +44,17 @@ createProduct(data) {
       .catch( err => {
         console.log(err);
       })
-    // let productInfo = {
-    //   id : this._productNumber,
-    //   name : data.name,
-    //   price : Number(data.price),
-    //   inventory : Number(data.inventory)
-    // };
 
-    // this._productList.push(productInfo);
     return true;
   }
 }
 
-// Checks if the element exists in the array
+// Checks if the element exists in the cache
 checkIfProductExists(id) {
-  if (this._productList === undefined) {
+  if (this.showAll() === undefined) {
     return false
   } else {
-    return this._productList.some(element => {
+    return this.showAll().some(element => {
       if (element.id === Number(id)) {
         return true;
       } else {
@@ -67,14 +64,14 @@ checkIfProductExists(id) {
   }
 }
 
-// Finds index of the element
+// Finds index of the element in the cache
 findTheIndex(id) {
-  return this._productList.findIndex((element, index) => {
+  return this.showAll().findIndex((element, index) => {
     return element.id === Number(id);
   })
 }
 
-// Returns the value of the first element in the array that matches the title
+// Returns the value of the first element in the cache that matches the title
 getProduct(id) {
   return this._productList.find(element => {
     return element.id === Number(id);
@@ -86,10 +83,18 @@ editProduct(id, data) {
   if (this.checkIfProductExists(id)) {
     let index = this.findTheIndex(id);
     let targetItem = this._productList[index];
-
-    if (data.name) targetItem.name = data.name;
-    if (data.price) targetItem.price = data.price;
-    if (data.inventory) targetItem.inventory = data.inventory;
+    if (data.name) {
+      if (data.name) targetItem.name = data.name;
+      this.knex.raw(`UPDATE items SET name = '${data.name}' WHERE id = ${id};`)
+        .then( EditCompleted => {
+          return EditCompleted;
+        })
+        .catch( err => {
+          console.log(err);
+        })
+    }
+    // if (data.price) targetItem.price = data.price;
+    // if (data.inventory) targetItem.inventory = data.inventory;
     
     return true;
   } else {

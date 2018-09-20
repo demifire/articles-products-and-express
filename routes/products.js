@@ -13,7 +13,9 @@ router.route('/')
         res.render('index', { 
           products : {
             list : true,
-            showFunction : products.showAll()
+            showFunction : products.showAll().sort(function(a, b) {
+              return (a.id - b.id) || a.name.localeCompare(b.name);
+            })
           } 
         });
         return loadingCompleted;
@@ -43,38 +45,54 @@ router.route('/new')
 router.route('/:id')
   .get((req, res) => {
     let id = req.params.id;
-    if (products.checkIfProductExists(id)) { 
-      let data = products.getProduct(id);
-
-      return res.render('index', {
-        products : {
-          product : true,
-          needToEdit : true,
-          id : data.id,
-          name : data.name,
-          price : data.price,
-          inventory : data.inventory
+    products.refreshID(id)
+      .then( loadingCompleted => {
+        console.log(loadingCompleted, "---loading completed 323424----");
+        if (products.checkIfProductExists(id)) {
+          let data = loadingCompleted.rows[0];
+          console.log(data, 'sup');
+    
+          res.render('index', {
+            products : {
+              product : true,
+              needToEdit : true,
+              id : data.id,
+              name : data.name,
+              price : data.price,
+              inventory : data.inventory
+            }
+          })
+          return loadingCompleted;
+        } else {
+          res.redirect(`/products`);
+          return loadingCompleted;
         }
       })
-    } else {
-      return res.redirect(`/products`);
-    }
+      .catch( err => {
+        console.log(err);
+      })
   })
 
   .put((req, res) => {
     let id = req.params.id;
-
-    if (products.editProduct(id, req.body)) {
-      return res.redirect(`/products/${id}`)
+      if (products.editProduct(id, req.body)) {
+        products.loadDatabase()
+          .then( loadingCompleted => {
+            return res.redirect(`/products/${id}`);
+            // return loadingCompleted;
+      })
+      .catch( err => {
+        console.log(err);
+      })
     } else {
-        return res.render('index', { 
-          products : {
-              list : true,
-              showFunction : products.showAll(),
-              itemDeleted : true
-          }
-        })
-      }
+      res.render('index', { 
+        products : {
+            list : true,
+            showFunction : products.showAll(),
+            itemDeleted : true
+        }
+      })
+    }
     }
   )
 
